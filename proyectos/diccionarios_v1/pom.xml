@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 
+    Coordenadas del proyecto = DATOS QUE IDENTIFICAN EL PROYECTO
+    -->
+    <groupId>com.curso.diccionarios_v1</groupId>
+    <artifactId>diccionarios_v1</artifactId>
+    <version>1.0.0</version>
+
+    <!--
+    Metadatos del proyecto
+    -->
+    <name>Aplicación de diccionarios</name>
+    <description>Aplicación para buscar los significados de una palabra en diccionarios de distintos idiomas</description>
+    <url>http://www.curso.com/diccionarios_v1</url>
+
+    <!--
+    Tipo de empaquetado
+      pom: proyecto que contiene dependencias y plugins
+      jar: librería o comando ejecutable (Es el valor por defecto)
+      war: aplicación web
+      ear: aplicación web empresarial (esto en realidad está hoy en día un poco obsoleto)
+    -->
+    <packaging>jar</packaging>
+
+    <!--
+    Variables que puedo usar para:
+        - Reusar datos dentro de este fichero
+        - Suministrar información a los plugins de maven
+    -->
+    <properties>
+        <!-- Estos datos son información que estamos pasando al plugin de compilación -->
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <!-- Otras propiedades ... yas las iremos escribiendo -->
+    </properties>
+
+    <!-- Dependencias (librerías adicionales que necesite mi proyecto) -->
+    <dependencies>
+        <!-- Dependencia de JUnit 5 
+            <dependency>
+                Datos identificativos: COORDENADAS DE LA DEPENDENCIA:
+
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>5.10.0</version>
+                
+                Para qué / Cómo usamos esa librería: SCOPE
+                Valores admitidos:
+                (compile = valor por defecto) No poner nada: la librería se usará en todos los casos
+                test: la librería se usará sólo para pruebas automatizadas (y no es necesaria en tiempo de ejecución)
+                provided: La librería es necesaria en tiempo de ejecución, pero estará disponible en el entorno de ejecución (por ejemplo, un servidor de aplicaciones)
+                <scope>test</scope>
+
+            </dependency>
+        -->
+
+    <!--
+     Plugins
+     Solo se ponen los plugins especiales que necesite.
+     Maven lleva de serie como 10 plugins que no es necesario configurar (compilación, ejecución de pruebas, empaquetado...)
+     Solamente si quiero cambios en la configuración por defecto de esos plugins, 
+     o si quiero usar un plugin que no viene por defecto, entonces lo pongo aquí.
+     -->
+    <build>
+        <plugins>
+            <!-- Plugin de compilación 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            -->
+        </plugins>
+    </build>  
+
+
+</project>
