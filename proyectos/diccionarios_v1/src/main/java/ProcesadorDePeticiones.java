@@ -3,10 +3,10 @@ import java.util.Optional;
 
 public class ProcesadorDePeticiones { 
 
-    private SuministradorDeDiccionariosEnFicheros suministradorDeDiccionarios;
+    private SuministradorDeDiccionarios suministradorDeDiccionarios;
     private ComunicadorConUsuario comunicadorConUsuario;
 
-    public ProcesadorDePeticiones(SuministradorDeDiccionariosEnFicheros suministradorDeDiccionarios, ComunicadorConUsuario comunicadorConUsuario) {
+    public ProcesadorDePeticiones(SuministradorDeDiccionarios suministradorDeDiccionarios, ComunicadorConUsuario comunicadorConUsuario) {
         this.suministradorDeDiccionarios = suministradorDeDiccionarios;
         this.comunicadorConUsuario = comunicadorConUsuario;
     }

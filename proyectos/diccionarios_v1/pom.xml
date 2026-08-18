@@ -80,6 +80,23 @@
                 </configuration>
             </plugin>
             -->
+            <!-- 
+            Plugin de ejecución de jar 
+            Al dar de alta este plugin, tenemos una nueva tarea que podemos pedir a maven:
+                mvn exec:java
+            Como en nuestro caso, al ejecutar hay que pasar parámetros, 
+            entonces podemos ponerlos en la configuración del plugin, y así no hace falta pasarlos en la línea de comandos.
+            Pero en nuestro caso, nos interesa más que los parámetros se pasen en la línea de comandos, porque así podemos probar distintos casos sin tener que cambiar el pom.xml:
+                mvn exec:java -Dexec.args="palabra idioma"
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>Aplicacion</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>  
 
