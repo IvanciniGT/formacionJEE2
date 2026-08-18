@@ -3,11 +3,26 @@ import java.util.List;
 
 public class ComunicadorConUsuarioDesdeTerminal implements ComunicadorConUsuario {
 
-    public Optional<String> getPalabraDelUsuario(){
+    private final String[] commandLineArguments;
 
+    public ComunicadorConUsuarioDesdeTerminal(String[] commandLineArguments) {
+        this.commandLineArguments = commandLineArguments;
     }
-    public Optional<String> getIdiomaDelUsuario(){
 
+    public Optional<String> getPalabraDelUsuario(){
+        if (commandLineArguments.length > 0) {
+            return Optional.of(commandLineArguments[0]); // Devuelve una caja con el valor.
+        } else {
+            return Optional.empty(); // Devuleve una caja vacía.
+        }
+    }
+    
+    public Optional<String> getIdiomaDelUsuario(){
+        if (commandLineArguments.length > 1) {
+            return Optional.of(commandLineArguments[1]); // Devuelve una caja con el valor.
+        } else {
+            return Optional.empty(); // Devuleve una caja vacía.
+        }
     }
 
     public void mostrarSignificadosAlUsuario(String palabra, String idioma, List<String> significados){
