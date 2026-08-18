@@ -94,7 +94,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>Aplicacion</mainClass>
+                    <mainClass>com.curso.diccionarios.Aplicacion</mainClass>
                 </configuration>
             </plugin>
         </plugins>

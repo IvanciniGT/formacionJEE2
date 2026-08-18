@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.curso.diccionarios_v1</groupId>
+    <artifactId>diccionarios_v1</artifactId>
+    <version>1.0.0</version>
+
+    <name>Sistema de diccionarios</name>
+    <description>Sistema para buscar los significados de una palabra en diccionarios de distintos idiomas</description>
+    <url>http://www.curso.com/diccionarios_v1</url>
+
+    <!-- Este proyecto es un proyecto PADRE, sin codigo, que solo alberga MODULOS -->
+    <packaging>pom</packaging>
+
+    <!-- Estas variables, las dependencias que ponga aqui y los plugins, se heredan a todos los proyectos hijos-->
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+    </properties>
+
+    <!-- Declarar los submodulos de este proyecto, para que se se puedan gestionar desde el padre -->
+    <modules>
+        <module>diccionarios-gestion-api</module>
+        <module>diccionarios-gestion-impl-ficheros</module>
+        <module>comunicador-api</module>
+        <module>comunicador-terminal</module>
+        <module>procesador-de-peticiones</module>
+        <module>diccionario-espanol</module>
+        <module>aplicacion-terminal</module>
+    </modules>
+
+</project>

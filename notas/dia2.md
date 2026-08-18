@@ -61,3 +61,56 @@ Paradigmas en programación:
 - Declarativo               Cada día lo usamos más. No digo a la computadora lo que debe hacer, sino lo que quiero tener.
                             Adoramos la programación DECLARATIVA. En java se puede usar? POR SUPUESTO: LAS ANOTACIONES SON UNA FORMA DE PROGRAMACIÓN DECLARATIVA. Spring/SpringBoot es un ejemplo de programación declarativa.
 - ...
+
+---
+
+Tenemos el proyecto en funcionamiento = GENIAL .
+Eso implica que tenemos hecho el 50% del trabajo.
+Nos falta la REFACTORIZACION... y eso será el otro 50% del trabajo. 
+
+La refactorización es el proceso de mejorar la estructura del código sin cambiar su comportamiento (que funciona!)
+
+    Desarrollo <> Pruebas -> OK -> Refactorizacion <> Pruebas -> OK -> Liberar
+    ---------------------------    --------------------------
+         50% del trabajo                50% del trabajo
+         8 horas de trabajo             8 horas de trabajo
+
+Luego algún jefe graciosillo nos dice... no hay pasta para refactorizar...
+Y la pregunta entonces debe ser: Y QUIEN LECHES HIZO EL PRESUPUESTO QUE NO TUVO ESTO EN CUENTA?
+QUE LE DESPIDAN INMEDIATO!!!
+Fuiste tu jefecillo? A LA CALLE !
+Que hacer organizando un proyecto de software si claramente NO TIENES NI IDEA DE LO QUE ES UN PROYECTO DE SOFTWARE?
+
+
+Si no refactorizo acumulo DEUDA TECNICA!
+
+Herramienats como SONAR QUBE calculan en automático esa DEUDA TECNICA... y la tasan en horas de trabajo.
+
+Y se le llama DEUDA por 2 motivos:
+1. En algún momento alguien tendrá que pagarla. Puede ser ahora o en el futuro, cuando haya que hacer cambios y la persona que los tenga que hacer no tenga ni idea de por donde meter mano al proyecto.
+2. Cuanto más tarde se pague, más intereses habrá que pagar.
+
+Hacer cambios ahora, que los hago yo, que he escrito el proyecto, que lo tengo en la cabeza, es mucho más barato que hacerlos en el futuro, cuando los haga una persona que no tiene ni idea de cómo está el proyecto organizado.
+
+Lo primero que vamos a hacer es CAMBIAR TOTALMENTE LA ESTRUCTURA DE CARPETAS QUE TENEMOS EN EL PROYECTO.
+Vamos a pasar de 1 proyecto MAVEN a 8-10 proyectos MAVEN, que se compilan y empaquetan de forma independiente, pero que se pueden usar unos a otros. Cada uno con su propio control de versiones INDEPENDIENTE. Cada uno con su propio repositorio GIT independiente.
+
+Después, reorganizaremos las clases en paquetes/directorios con cierto sentido.
+Después revisaremos CODIGO y aplicaremos DRY (Don't Repeat Yourself).
+
+Además, tenemos una clase "APLICACION" que tendríamos que tocar por muchos MOTIVOS:
+- Si cambia el SuministradorDeDiccionarios, hay que cambiar la clase APLICACION. 
+- Si cambia el ComunicadorConUsuario, hay que cambiar la clase APLICACION.
+
+Vamos a aplicar un patrón FACTORIA, para que haya clases específicas que se encarguen de crear el SuministradorDeDiccionarios y el ComunicadorConUsuario, y la clase APLICACION no tenga que preocuparse de eso.
+
+(NOTA: ESAS FACTORIAS, el día de mañana se convertirán en Spring en BEANS... en automático)
+
+Vamos a crear un proyecto MAVEN MULTIMODULO, que es un proyecto MAVEN que contiene otros proyectos MAVEN. 
+Habrá una carpeta padre, para el proyecto global, pero sin código.
+Dentro de ella, tendré Muchos proyectos, uno para cada componente (api/implementaciones por separado + diccionarios + aplicacion)
+
+---
+
+Igual que en Maven tenemos proyectos multimodulo, donde un proyecto padre puede tener modulos hijos,
+En GIT también podemos tener repositorios multimodulo, donde un repositorio padre puede tener repositorios hijos. En git, esta funcionalidad se denomina SUBMODULES.
