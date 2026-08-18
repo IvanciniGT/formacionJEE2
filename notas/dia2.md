@@ -114,3 +114,159 @@ Dentro de ella, tendré Muchos proyectos, uno para cada componente (api/implemen
 
 Igual que en Maven tenemos proyectos multimodulo, donde un proyecto padre puede tener modulos hijos,
 En GIT también podemos tener repositorios multimodulo, donde un repositorio padre puede tener repositorios hijos. En git, esta funcionalidad se denomina SUBMODULES.
+
+---
+
+Ya tenemos el proyecto refactorizado.
+Y está bien... lo podría distribuir! La versión 1.0.0 de mi sistema/aplicación.
+
+El problema ahora es otro.
+Esta aplicación, tal y como está construida, va a dar problemas grandes de OPERACIÓN!
+Entre ellos:
+- Cada usuario debe instalar la aplicación en su entorno
+- Además, para que funcione, deben tener en su entorno la JVM de JAVA, al menos en versión 21
+- Cada vez que haya una actualización de verisón, tengo a 500 usuarios reinstalando todo! FLIPAS!
+  Los usuarios en general son bastante torpes!
+    TRYING TO MAKE THINGS IDIOT-PROOF. But they keep making better idiots.
+- Como haya un problema, a priori NO SE SOBRE QUE VERSION DE LA APLICACION ESTA DANDO EL PROBLEMA!
+  La que tenga el usuario... que YO NO TENGO CONTROL DE ELLA... La ha montado EL! 
+- Como cambié o añada un diccionario... A REDISTRIBUIR A TODO EL MUNDO... FLIPAS!
+
+Todo esto no tiene que ver con el desarrollo del sistema. Al menos aparentemente.
+Y por eso muchas veces apsa desapercibido.
+
+La operación de un sistema CUESTA MUCHO MAS DINERO QUE SU DESARROLLO.
+El desarrollo son X meses de N desarrolladores picando código.
+La operación SON AÑOS de N personas manteniendo el sistema en funcionamiento, actualizando, resolviendo problemas (TICKETS), etc. <- ESTO ES MUCHA PASTA PARA UNA EMPRESA !
+
+Mi trabajo no es hacer algo que funcioné e irme a jugar al LOL.
+Mi trabajo es quitar trabajo a los que vienen detrás!
+Por esto me van a pagar pasta.
+
+Por picar código NO ME VAN A DAR ni 5€/mes hoy en día.
+Este codigo que hemos escrito lo escribe COPILOT o CLAUDE en 5 minutos... o 10.
+
+El diseño de sistema que hemos planteado NO LO SACAN COPILOT NI CLAUDE EN AÑOS!
+       ^^^^^^^^
+AQUI ESTA LA PASTA HOY EN DIA!!
+---
+
+Vamos a meterle mano... Pero... poco a poco.
+
+Lo primero que vamos a hacer es llevar parte de la funcionalidad del sistema a un servidor.
+Eso tiene muchas ventajas:
+- Los cambios/actualizaciones en esa parte que mueva al servidor los instala el equipo de IT, sin que los usuarios tengan que hacer nada.
+- Me aseguro que solo tengo una versión de esa parte del sistema, y que todos los usuarios la usan. No hay problemas de versiones.
+
+# Versión 1: 
+
+        Local
+    -------------------------------------------------------------------------------------------------------------
+        Aplicación -> ProcesadorDePeticiones -> SuministradorDeDiccionarios -> Diccionarios <- (Impl a ficheros)
+                                             -> ComunicadorConUsuario 
+
+# Versión 2: 
+
+        Local                                                               Servidor
+    ------------------------------------------------------------------   -------------------------------------------------------------------
+        Aplicación -> ProcesadorDePeticiones -----------------------------> SuministradorDeDiccionarios -> Diccionarios <- (Impl a ficheros)
+                                             -> ComunicadorConUsuario                                             
+
+
+Esa comunicación entre cliente y servidor es la que necesita que definamos un protocolo de comunicación y unos mecanismos de serialización/deserialización de datos.
+A lo largo de los años han ido surgiendo muchos protocolos de comunicación y mecanismos de serialización/deserialización de datos. Algunos de ellos son:
+- RMI (Remote Method Invocation): Me permite invocar objetos remotos como si fueran locales. (Hoy en día en desuso completamente)
+  Solo era JAVA 
+- CORBA (hoy en día eliminado de JAVA: Me permitía invocar objetos remotos como si fueran locales)
+  Permitía tener Lenguajes de programación diferentes en cliente y servidor. 
+- SOAP (Simple Object Access Protocol): Protocolo de comunicación basado en XML sobre HTTP. Hoy en día en desuso (queda legacy).
+  Mucha sobrecarga... en el envío de los datos. XML es muy pesado como formato de serialización/deserialización de datos.
+- REST (Representational State Transfer): Protocolo de comunicación basado en HTTP. Realmente no es un protocolo... sino restricciones de uso del protocolo HTTP. Hoy en día es el más usado.
+
+
+
+        Local                                                                       Servidor
+    ------------------------------------------------------------------        -------------------------------------------------------------------
+        Aplicación -> ProcesadorDePeticiones -> SuministradorDeDiccionarios   --------HTTP/REST(json)-----> SuministradorDeDiccionarios -> Diccionarios <- (Impl a ficheros)
+                                             -> ComunicadorConUsuario                                             
+
+La gracia de la arquitectura que hemos montado es que no vamos a tener que modificar más que la aplicación.
+Y eso si, crear un nuevo SuministradorDeDiccionarios que se comunique con otro SuministradorDeDiccionarios remoto, que puede estar en otro servidor, en otro país, etc... y la aplicación no se entera de nada. No hay que tocarla.
+
+SuministradorDeDiccionarios -> SuministradorDeDiccionariosRest
+
+Tocar código... 1 linea: La factoria del SuministradorDeDiccionarios 
+Además, crearemos de cero:
+- Aplicación Web para instalar en servidor (Springboot)
+- Suministrador de diccionarios remoto
+Cuando acabe, podré elegir entre usar la versión de la app que trabaja con servidor o la versión local.
+
+---
+
+# Spring/Springboot
+
+Framework para el desarrollo de apps JAVA que ofrece INVERSION DE CONTROL.
+
+Como consecuencia de ofrecer INVERSION DE CONTROL es capaz de ayudarme con la inyección de dependencias. 
+
+Además, gracias a Springboot (una de las más de 200 librerías que componen ese framework) puedo crear aplicaciones de forma muy sencilla gracias al uso de lenguaje DECLARATIVO (Anotaciones) y convenciones sobre configuración.
+
+## INVERSION DE CONTROL?
+
+Es un patrón por el cuál YO NO ESCRIBO EL FLUJO DE MI APLICACION, sino que dejo al framework que ponga el FLUJO DE MI APLICACION.
+
+Y esto nos vuelve locos cuando comenzamos con Spring. Porque no veo el HILO DE EJECUCION (CONDUCTOR) de mi aplicación. No veo el hilo conductor de mi aplicación porque no lo he escrito yo... de hecho no aparece por ningún sitio. Lo pone Spring. Y NECESITO APRENDER EL FLUJO QUE IMPONE SPRING A MI APLICACION PARA PODER ENTENDERLA Y PODER HACER CAMBIOS EN ELLA.
+
+### ETL (Extract Transform Load)
+
+Un script cutre que carga datos en una BBDD extraidos por ejemplo de un fichero ... que se ejcuta todas las noches a las 3am.
+
+QUIERO QUE: ALGO ASI COMO LOS REQUISITOS
+- Cuando acabe el proceso, quiero un email de aviso a mi jefe diciendo que el proceso ha terminado, y que me diga cuántos registros se han cargado correctamente.
+- Los datos se guarden en una BBDD Oracle, dentro de una tabla llamada USUARIOS.
+- Antes de cargarse, quiero que se validen los DNIs de los usuarios. Si no son correctos, se dejan apartados en un fichero.
+- Los datos se leen de un excel, que tiene las columnas: NOMBRE, APELLIDOS, DNI, EMAIL, TELEFONO, FECHA_NACIMIENTO
+- Si una persona es menor de edad en la carga, quiero que se deje en un fichero aparte.
+- Quiero que en el correo de cierre se adjunten los ficheros de registros con errores de dni y registros de menores de edad.
+- Lo primero, cuando arranque el programa, quiero un email de aviso a mi jefe diciendo que el proceso ha comenzado.
+
+QUE LENGUAJE HE USADO AQUI?   ^^^^^ DECLARATIVO
+
+FLUJO DE MI APP... En un pseudo lenguaje
+
+1. Envia email de inicio
+2. Verifica si existe el excel
+3. Abre conexion con BBDD
+4. Abre el excel
+5. Para cada linea del excel                                                                                                     [BUCLE]
+   1. Validar dni (si está mal -> escribir en fichero de errores y continuar con la siguiente linea)                             [CONDICIONAL]
+   2. Validar fecha de nacimiento (si es menor de edad -> escribir en fichero de menores y continuar con la siguiente linea)     [CONDICIONAL]
+   3. Insertar en BBDD
+6. Cerrar conexion con BBDD
+7. Cierro fichero
+8. Mando email de cierre con adjuntos de errores y menores
+
+
+Que tipo de lenguaje estoy usando al expresar este flujo? PARADIGMA DE PROGRAMACION?                IMPERATIVO
+
+Estamos muy acostumbrados a imperativo.
+
+Con SPRINGBOOT voy a hablar en lenguaje DECLARATIVO, y el framework se encargará de traducirlo a IMPERATIVO.
+El framework impone el FLUJO POR MI.
+
+De hecho, en SPRING hay una librería llamada SPRING-BATCH que precisamente sirve para montar ETLs de forma muy sencilla y declarativa.
+
+SPRING NO VALE SOLO PARA APPS WEB. También sirve para apps de escritorio, apps de consola, apps de servicios, etc.
+
+De hecho Spring tienen tantas librerias que ANTIGUAMENTE era una locura encontrar la colección exacta de librerías que necesitaba mi proyecto. Solo Spring tiene más de 200... y luego sus dependencias.
+
+Springboot nace para simplificar la configuración de Spring. Y lo hace imponiendo CONVENCIONES sobre la configuración.
+Una de las cosas que proporciona Springboot son los Starters. 
+Son colecciones de librerías preempaquetadas que me permiten hacer tipos de apps con funcionalidades concretas de forma sencilla.
+
+Por ejemplo, quiero hacer una app para contener microservicios web: spring-boot-starter-web
+Pero quiero que pueda manejar datos de bbdd relaciones mediante el estandar JPA: spring-boot-starter-data-jpa
+Y quiero pòder hablar con mongo: spring-boot-starter-data-mongodb
+Y quiero hacer pruebas mi sistema automatizadas: spring-boot-starter-test
+
+Esos starters son colecciones de librerías que me permiten hacer cosas concretas de forma sencilla. Y además, Springboot se encarga de configurar esas librerías para que funcionen entre ellas.
