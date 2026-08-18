@@ -1,7 +1,11 @@
 import java.util.Optional;
 import java.util.WeakHashMap;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -67,6 +71,32 @@ public class SuministradorDeDiccionariosEnFicheros implements SuministradorDeDic
 
     private Map<String, List<String>> leerFicheroDeDiccionario(String rutaDelFichero){
         Map<String, List<String>> palabrasYSignificados = new HashMap<>();
+        // Leer el fichero
+        // Lo haremos mediante el cargador de clases... para que lo encuentre en classpath.
+        InputStream inputStream = getClassLoader().getResourceAsStream(rutaDelFichero);
+        // Además usaremos un BufferedReader para leer el fichero línea a línea.
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String linea;
+        try{
+            while((linea = bufferedReader.readLine()) != null){
+                // Procesar la línea
+                String[] partes = linea.split("=");
+                String palabra = partes[0];
+                String[] significadosArray = partes[1].split("\\|");
+                palabrasYSignificados.put(palabra, List.of(significadosArray));
+            }
+            // Cerrar el BufferedReader
+        } catch (Exception e) {
+            System.out.println("Error al leer el fichero de diccionario: " + e.getMessage());
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (Exception e) {
+                System.out.println("Error al cerrar el BufferedReader: " + e.getMessage());
+            }
+        }
+        // Una vez que tenga una linea, parto por "=" y obtengo la palabra y los significados.
+        // Una vez que tenga los significados, parto por "|" y obtengo la lista de significados.
         
         return palabrasYSignificados;
     }
