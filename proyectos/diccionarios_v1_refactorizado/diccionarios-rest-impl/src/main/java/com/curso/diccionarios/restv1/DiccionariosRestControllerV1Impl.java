@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import com.curso.diccionarios.restv1.dto.RespuestaPalabraDTO;
 
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.curso.diccionarios.gestion.respuesta.diccionario.RespuestaDiccionario;
 import com.curso.diccionarios.gestion.respuesta.diccionario.DiccionarioEncontrado;
@@ -19,6 +20,7 @@ import com.curso.diccionarios.restv1.dto.Idioma;
 import com.curso.diccionarios.restv1.dto.Palabra;
 import com.curso.diccionarios.gestion.SuministradorDeDiccionarios;
 
+@RestController // Esta anotación no se hereda. El resto de las que tenemos a nivel de la clase si.
 public class DiccionariosRestControllerV1Impl implements DiccionariosRestControllerV1 {
     
     private final SuministradorDeDiccionarios suministradorDeDiccionarios;
