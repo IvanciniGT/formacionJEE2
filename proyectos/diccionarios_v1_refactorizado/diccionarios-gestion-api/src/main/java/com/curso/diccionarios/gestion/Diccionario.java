@@ -6,3 +6,9 @@ public interface Diccionario {
     boolean existe(String palabra);
     Optional<List<String>> getSignificados(String palabra); 
 }
+/*
+RespuestaPalabra
+PalabraNoEncontrada
+PalabraEncontrada
+ErrorAlObtenerPalabra
+*/
