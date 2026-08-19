@@ -178,7 +178,7 @@ public interface ConsumidorDeAlgo {
                                                     Adaptador                                 Adaptador
                                                 -----------------------------                 ---------
         Aplicación -> ProcesadorDePeticiones -> SuministradorDeDiccionario??? => HTTP/REST =>  ??? -> SuministradorDeDiccionariosDesdeFicheros -> DiccionarioDesdeFichero
-                                               ¿Datos/JSON?
+                                               ¿Datos/JSON?                       API/REST
 
 Patrón adaptador es un componente que permite que dos interfaces incompatibles trabajen juntas. Actúa como un puente entre ellas, traduciendo las llamadas de una interfaz a otra.
 Por un lado tenemos una interfaz JAVA (SuministradorDeDiccionarios) y por otro lado tenemos una interfaz HTTP/REST (que es la que entiende el servidor). 

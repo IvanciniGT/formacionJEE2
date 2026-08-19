@@ -2,13 +2,14 @@ package com.curso.diccionarios.restv1;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.curso.diccionarios.restv1.dto.RespuestaPalabra;
+import com.curso.diccionarios.restv1.dto.RespuestaPalabraDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -40,7 +41,7 @@ public interface DiccionariosRestControllerV1 {
         @ApiResponse(responseCode = "404", description = "Diccionario no encontrado"),
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public void existeIdioma(@PathVariable String idioma);
+    public ResponseEntity<Void> existeIdioma(@PathVariable String idioma);
 
     // Quiero tener en el servidor una ruta que sea invocable vía HTTP GET/HEAD
     // Qué será: GET /v1/diccionario/{idioma}/{palabra}
@@ -58,7 +59,7 @@ public interface DiccionariosRestControllerV1 {
         @ApiResponse(responseCode = "404", description = "Palabra no encontrada"),
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public void existePalabra(@PathVariable String idioma, @PathVariable String palabra);
+    public ResponseEntity<Void> existePalabra(@PathVariable String idioma, @PathVariable String palabra);
 
     // Quiero tener en el servidor una ruta que sea invocable vía HTTP GET/HEAD
     // Qué será: GET /v1/diccionario/{idioma}/{palabra}/significados
@@ -79,7 +80,7 @@ public interface DiccionariosRestControllerV1 {
         @ApiResponse(responseCode = "404", description = "Palabra no encontrada"),
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public RespuestaPalabra obtenerSignificados(@PathVariable String idioma, @PathVariable String palabra);
+    public ResponseEntity<RespuestaPalabraDTO> obtenerSignificados(@PathVariable String idioma, @PathVariable String palabra);
 
     // Qué paradigma de programacion acabo de usar? DECLARATIVO!
     // Quiero... Esto es lo que debe ser...
