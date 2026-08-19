@@ -4,7 +4,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.curso.diccionarios.restv1.dto.RespuestaPalabraDTO;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.curso.diccionarios.gestion.respuesta.diccionario.RespuestaDiccionario;
@@ -29,7 +31,7 @@ public class DiccionariosRestControllerV1Impl implements DiccionariosRestControl
         this.suministradorDeDiccionarios = suministradorDeDiccionarios;
     }
 
-    public ResponseEntity<Void> existeIdioma(@PathVariable String idioma){
+    public ResponseEntity<Void> existeIdioma(@PathVariable("idioma") String idioma){
        RespuestaDiccionario respuesta = suministradorDeDiccionarios.getDiccionario(idioma);
        switch (respuesta) {
             case DiccionarioEncontrado diccionarioEncontrado -> {
@@ -44,7 +46,7 @@ public class DiccionariosRestControllerV1Impl implements DiccionariosRestControl
         }
     }
 
-    public ResponseEntity<Void> existePalabra(@PathVariable String idioma, @PathVariable String palabra){
+    public ResponseEntity<Void> existePalabra(@PathVariable("idioma") String idioma, @PathVariable("palabra") String palabra){
         RespuestaDiccionario respuestaDiccionario = suministradorDeDiccionarios.getDiccionario(idioma);
         switch (respuestaDiccionario) {
             case DiccionarioEncontrado diccionarioEncontrado -> {
@@ -71,7 +73,7 @@ public class DiccionariosRestControllerV1Impl implements DiccionariosRestControl
         }
     }
 
-    public ResponseEntity<RespuestaPalabraDTO> obtenerSignificados(@PathVariable String idioma, @PathVariable String palabra){
+    public ResponseEntity<RespuestaPalabraDTO> obtenerSignificados(@PathVariable("idioma") String idioma, @PathVariable("palabra") String palabra){
         RespuestaDiccionario respuestaDiccionario = suministradorDeDiccionarios.getDiccionario(idioma);
         switch (respuestaDiccionario) {
             case DiccionarioEncontrado diccionarioEncontrado -> {
@@ -97,7 +99,7 @@ public class DiccionariosRestControllerV1Impl implements DiccionariosRestControl
                     case ErrorAlObtenerPalabra error -> {
                         return ResponseEntity.status(500).body(
                             new RespuestaPalabraDTO(
-                                new Idioma(idioma),
+                                new Idioma(idioma, true),
                                 new Palabra(palabra),
                                 error.mensajeError()
                             )

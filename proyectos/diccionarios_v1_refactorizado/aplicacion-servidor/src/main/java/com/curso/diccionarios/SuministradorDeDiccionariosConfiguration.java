@@ -18,7 +18,7 @@ import com.curso.diccionarios.gestion.impl.ficheros.SuministradorDeDiccionariosE
 // Spring le inyectará el objeto que guardó de nuestra función.
 public class SuministradorDeDiccionariosConfiguration {
 
-    private static final String RUTA_DE_DICCIONARIOS = "./diccionarios";
+    private static final String RUTA_DE_DICCIONARIOS = "diccionarios";
 
     @Bean
     public SuministradorDeDiccionarios getSuministrador(){

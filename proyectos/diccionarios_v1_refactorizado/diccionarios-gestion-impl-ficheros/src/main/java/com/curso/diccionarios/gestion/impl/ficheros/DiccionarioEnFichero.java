@@ -3,6 +3,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.curso.diccionarios.gestion.Diccionario;
+import com.curso.diccionarios.gestion.respuesta.palabra.PalabraEncontrada;
+import com.curso.diccionarios.gestion.respuesta.palabra.PalabraNoEncontrada;
+import com.curso.diccionarios.gestion.respuesta.palabra.RespuestaPalabra;
 
 import java.util.Map;
 
@@ -36,4 +39,15 @@ public class DiccionarioEnFichero implements Diccionario {
        */
        return Optional.ofNullable(palabrasYSignificados.get(palabra));
     }
+
+    public RespuestaPalabra dameSignificados(String palabra) {
+        Optional<List<String>> significados = getSignificados(palabra);
+        if(significados.isPresent()){
+            return new PalabraEncontrada(palabra, significados.get());
+        } else {
+            return new PalabraNoEncontrada(palabra);
+        }
+    }
+
+
 }

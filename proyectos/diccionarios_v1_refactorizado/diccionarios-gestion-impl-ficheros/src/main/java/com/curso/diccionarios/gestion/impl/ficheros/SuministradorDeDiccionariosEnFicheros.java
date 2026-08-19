@@ -4,13 +4,16 @@ import java.util.WeakHashMap;
 
 import com.curso.diccionarios.gestion.Diccionario;
 import com.curso.diccionarios.gestion.SuministradorDeDiccionarios;
+import com.curso.diccionarios.gestion.respuesta.diccionario.DiccionarioEncontrado;
+import com.curso.diccionarios.gestion.respuesta.diccionario.DiccionarioNoEncontrado;
+import com.curso.diccionarios.gestion.respuesta.diccionario.ErrorAlObtenerDiccionario;
+import com.curso.diccionarios.gestion.respuesta.diccionario.RespuestaDiccionario;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.rmi.server.ExportException;
 import java.util.Map;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,17 +45,37 @@ public class SuministradorDeDiccionariosEnFicheros implements SuministradorDeDic
     }
 
     public Optional<Diccionario> dameDiccionario(String idioma) {
-        if(tienesDiccionarioDe(idioma)){
-        //   Si no está en cache, lo subo a cache
-            if(!cache.containsKey(idioma)){
-                // Carga en la cache del diccionario del idioma indicado
-                cargarDiccionarioEnCache(idioma);
+        try{
+            if(tienesDiccionarioDe(idioma)){
+            //   Si no está en cache, lo subo a cache
+                if(!cache.containsKey(idioma)){
+                    // Carga en la cache del diccionario del idioma indicado
+                    cargarDiccionarioEnCache(idioma);
+                }
+                return Optional.of(cache.get(idioma));
+            } else {
+                return Optional.empty();
             }
-            return Optional.of(cache.get(idioma));
-        } else {
+        }catch(Exception e){
+            // Meter entrada en el log de errores
+            System.out.println("Error al obtener el diccionario de idioma " + idioma + ": " + e.getMessage());
             return Optional.empty();
         }
     }
+
+    public RespuestaDiccionario getDiccionario(String idioma) {
+        try{
+            Optional<Diccionario> diccionarioOptional = dameDiccionario(idioma);
+            if(diccionarioOptional.isPresent()){
+                return new DiccionarioEncontrado(diccionarioOptional.get());
+            } else {
+                return new DiccionarioNoEncontrado(idioma);
+            }
+        }catch(Exception e){
+            return new ErrorAlObtenerDiccionario(e.getMessage());
+        }
+    }
+    
 
     private String rutaDelFicheroDeDiccionario(String idioma){
         //return carpetaDeLosDiccionarios + File.separator + idioma + ".txt";
@@ -66,7 +89,7 @@ public class SuministradorDeDiccionariosEnFicheros implements SuministradorDeDic
         return this.getClass().getClassLoader();
     }
 
-    private void cargarDiccionarioEnCache(String idioma){
+    private void cargarDiccionarioEnCache(String idioma) throws Exception{
         String rutaDelFichero = rutaDelFicheroDeDiccionario(idioma);
         // Puedo hacer aquí la lectura del fichero... y pasarle al diccionario el contenido (palabras y significados)
         Map<String, List<String>> palabrasYSignificados = leerFicheroDeDiccionario(rutaDelFichero);
@@ -74,7 +97,7 @@ public class SuministradorDeDiccionariosEnFicheros implements SuministradorDeDic
         cache.put(idioma, diccionario);
     }
 
-    private Map<String, List<String>> leerFicheroDeDiccionario(String rutaDelFichero){
+    private Map<String, List<String>> leerFicheroDeDiccionario(String rutaDelFichero) throws Exception{
         Map<String, List<String>> palabrasYSignificados = new HashMap<>();
         // Leer el fichero
         // Lo haremos mediante el cargador de clases... para que lo encuentre en classpath.
@@ -91,8 +114,6 @@ public class SuministradorDeDiccionariosEnFicheros implements SuministradorDeDic
                 palabrasYSignificados.put(palabra, List.of(significadosArray));
             }
             // Cerrar el BufferedReader
-        } catch (Exception e) {
-            System.out.println("Error al leer el fichero de diccionario: " + e.getMessage());
         } finally {
             try {
                 bufferedReader.close();

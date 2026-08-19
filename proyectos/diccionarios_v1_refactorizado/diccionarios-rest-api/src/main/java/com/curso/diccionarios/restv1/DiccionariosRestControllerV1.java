@@ -41,7 +41,7 @@ public interface DiccionariosRestControllerV1 {
         @ApiResponse(responseCode = "404", description = "Diccionario no encontrado"),
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<Void> existeIdioma(@PathVariable String idioma);
+    public ResponseEntity<Void> existeIdioma(@PathVariable("idioma") String idioma);
 
     // Quiero tener en el servidor una ruta que sea invocable vía HTTP GET/HEAD
     // Qué será: GET /v1/diccionario/{idioma}/{palabra}
@@ -59,7 +59,7 @@ public interface DiccionariosRestControllerV1 {
         @ApiResponse(responseCode = "404", description = "Palabra no encontrada"),
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<Void> existePalabra(@PathVariable String idioma, @PathVariable String palabra);
+    public ResponseEntity<Void> existePalabra(@PathVariable("idioma") String idioma, @PathVariable("palabra") String palabra);
 
     // Quiero tener en el servidor una ruta que sea invocable vía HTTP GET/HEAD
     // Qué será: GET /v1/diccionario/{idioma}/{palabra}/significados
@@ -80,7 +80,7 @@ public interface DiccionariosRestControllerV1 {
         @ApiResponse(responseCode = "404", description = "Palabra no encontrada"),
         @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<RespuestaPalabraDTO> obtenerSignificados(@PathVariable String idioma, @PathVariable String palabra);
+    public ResponseEntity<RespuestaPalabraDTO> obtenerSignificados(@PathVariable("idioma") String idioma, @PathVariable("palabra") String palabra);
 
     // Qué paradigma de programacion acabo de usar? DECLARATIVO!
     // Quiero... Esto es lo que debe ser...
