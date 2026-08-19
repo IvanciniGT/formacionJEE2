@@ -3,9 +3,6 @@ package com.curso.diccionarios.gestion;
 import java.util.List;
 import java.util.Optional;
 
-import com.curso.diccionarios.gestion.respuesta.palabra.ErrorAlObtenerPalabra;
-import com.curso.diccionarios.gestion.respuesta.palabra.PalabraEncontrada;
-import com.curso.diccionarios.gestion.respuesta.palabra.PalabraNoEncontrada;
 import com.curso.diccionarios.gestion.respuesta.palabra.RespuestaPalabra;
 
 public interface Diccionario {

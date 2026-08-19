@@ -32,6 +32,7 @@
         <module>aplicacion-terminal</module>
         <module>diccionarios-rest-api</module>
         <module>diccionarios-rest-impl</module>
+        <module>aplicacion-servidor</module>    
     </modules>
 
 </project>
