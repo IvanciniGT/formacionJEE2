@@ -1,10 +1,13 @@
 package com.curso.diccionarios.gestion.impl.ficheros;
+
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import com.curso.diccionarios.gestion.Diccionario;
-
-import java.util.Map;
+import com.curso.diccionarios.gestion.respuesta.palabra.ErrorAlObtenerPalabra;
+import com.curso.diccionarios.gestion.respuesta.palabra.PalabraEncontrada;
+import com.curso.diccionarios.gestion.respuesta.palabra.PalabraNoEncontrada;
+import com.curso.diccionarios.gestion.respuesta.palabra.RespuestaPalabra;
 
 public class DiccionarioEnFichero implements Diccionario {
 
@@ -14,26 +17,17 @@ public class DiccionarioEnFichero implements Diccionario {
         this.palabrasYSignificados = palabrasYSignificados;
     }
 
-    public boolean existe(String palabra){
-        return palabrasYSignificados.containsKey(palabra);
-    }
-
-    public Optional<List<String>> getSignificados(String palabra){
-        /*
-        if( existe(palabra) ){
-            return Optional.of(palabrasYSignificados.get(palabra));
-        } else {
-            return Optional.empty();
+    @Override
+    public RespuestaPalabra getSignificados(String palabra) {
+        try {
+            List<String> significados = palabrasYSignificados.get(palabra);
+            if (significados != null) {
+                return new PalabraEncontrada(palabra, significados);
+            } else {
+                return new PalabraNoEncontrada(palabra);
+            }
+        } catch (Exception e) {
+            return new ErrorAlObtenerPalabra(e.getMessage());
         }
-        */
-       /*
-       List<String> significados = palabrasYSignificados.get(palabra);
-       if( significados != null ){
-           return Optional.of(significados);
-       } else {
-           return Optional.empty();
-       }
-       */
-       return Optional.ofNullable(palabrasYSignificados.get(palabra));
     }
 }

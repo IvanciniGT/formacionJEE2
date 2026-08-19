@@ -57,3 +57,95 @@ D = DIP = Dependency Inversion Principle (Principio de Inversión de Dependencia
 ## Principio de Sustituición de Liskov (LSP)
 
 Un principio que nos dice que si tenemos una clase base y una clase derivada, la clase derivada debe poder sustituir a la clase base sin alterar el comportamiento esperado del programa. En otras palabras, los objetos de la clase derivada deben poder ser utilizados en lugar de los objetos de la clase base sin que el programa falle o se comporte de manera inesperada.
+
+
+> Caso tipico de Liskov
+
+```java
+public class Rectangulo {
+
+    private int ancho;
+    private int alto;
+
+    public Rectangulo(int ancho, int alto) {
+        this.ancho = ancho;
+        this.alto = alto;
+    }
+
+    public int getAncho() {
+        return ancho;
+    }
+    public int getAlto() {
+        return alto;
+    }
+    public void setAncho(int ancho) {
+        this.ancho = ancho;
+    }
+
+    public void setAlto(int alto) {
+        this.alto = alto;
+    }
+    public int area() {
+        return ancho * alto;
+    }
+    public int perimetro() {
+        return 2 * (ancho + alto);
+    }
+
+}
+public class Cuadrado extends Rectangulo {
+
+    public Cuadrado(int lado) {
+        super(lado, lado);
+    }
+
+    public void setAncho(int ancho) {
+        super.setAncho(ancho);
+        super.setAlto(ancho);// El problema es esta restriccion que acabamos de meter aqui! // Esto rompe Liskov
+    }
+    public void setAlto(int alto) {
+        super.setAlto(alto);
+        super.setAncho(alto);// El problema es esta restriccion que acabamos de meter aqui! // Esto rompe Liskov
+    }
+
+}
+
+
+Rectangulo r = new Rectangulo(10, 10);
+r.setAlto(10);
+r.setAncho(20);
+
+int area = r.area(); // 400
+
+
+// Otro ejemplo de Liskov
+
+public interface GeneradorDeAlgo {
+
+    public Object generar();
+
+}
+
+// Esa función puede devolver nulo o no? NO LO HE CERRADO EN EL API.
+// Podría tener una implementación que no genere nulos
+// Y otra que si
+// PROBLEMON!
+
+public interface ConsumidorDeAlgo {
+
+    public void consumir(@NonNull Object algo);
+
+}
+
+// Podría tener una implementación que no acepte nulos (Genere un NullPointerException) y otra que si los acepte.
+
+// LAS IMPLEMENTACIONES SIEMPRE DEBEN GARANTIZAR EL CONTRATO DE LA INTERFAZ, NO PUEDEN ROMPERLO. SI LO ROMPEN, ROMPEN LISKOV.
+// A veces lo pueden romper devolviendo cosas que no se esperan (Como nuestro caso de RespuestaPalabra si no pongo el sealed)
+// A veces lo pueden romper aceptando cosas que no se esperan (Como nuestro caso de ConsumidorDeAlgo si no pongo el @NonNull)
+// A veces es cambios internos que rompen el contrato (Como nuestro caso de Cuadrado que rompe Liskov con Rectangulo)
+
+// Y aquí vienen muchos problemas luego.
+
+// El objetivo es BLINDAR el contrato para que así las implementaciones no puedan romperlo. Y para eso tenemos el sealed y el @NonNull.
+// La implementación DEFINE como se comporta, y el contrato DEFINE como se debe comportar y cómo comunicarse (datos de entrada y salida) con ella.
+```

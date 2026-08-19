@@ -1,6 +1,8 @@
 package com.curso.diccionarios.gestion;
 import java.util.Optional;
 
+import com.curso.diccionarios.gestion.respuesta.diccionario.RespuestaDiccionario;
+
 public interface SuministradorDeDiccionarios { 
 
     @Deprecated(
