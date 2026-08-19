@@ -25,6 +25,7 @@
     <modules>
         <module>diccionarios-gestion-api</module>
         <module>diccionarios-gestion-impl-ficheros</module>
+        <module>diccionarios-gestion-impl-rest</module>
         <module>comunicador-api</module>
         <module>comunicador-terminal</module>
         <module>procesador-de-peticiones</module>
@@ -33,6 +34,7 @@
         <module>diccionarios-rest-api</module>
         <module>diccionarios-rest-impl</module>
         <module>aplicacion-servidor</module>    
+        <module>aplicacion-terminal-remoto</module>
     </modules>
 
 </project>

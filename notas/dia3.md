@@ -166,9 +166,18 @@ public interface ConsumidorDeAlgo {
         Aplicación -> ProcesadorDePeticiones -> ???
                                              -> ComunicadorConUsuarioDesdeTerminal 
 
+                API REST (COMPONENTE NUEVO / API) -> diccionarios-rest-api
+
+
         Servidor
     -------------------------------------------------------------------------------------------------------------
-        Aplicación -> ?????                  -> SuministradorDeDiccionariosDesdeFicheros -> DiccionarioDesdeFichero
+        Aplicación-Servidor -> DiccionariosRestControllerV1 -> SuministradorDeDiccionariosDesdeFicheros -> DiccionarioDesdeFichero
+
+              ^^^^^^                    ^^^^^                       ^^^^
+         aplicacion-servidor        diccionarios-rest-impl          upgrade : diccionarios-impl-ficheros
+                                                                        1.0.0 -> 1.1.0
+                                                                        Añadiendo las 2 funciones nueva que definimos en el api
+                                                                        para controlar errores en comunicaciones
 
 
         => Es la que queremos transformar.. y que ahora no sea una comunicación local, sino remota vía HTTP REST.
@@ -551,3 +560,29 @@ usuario.edad = 25; // Modifico la edad directamente // Y esto llama a la funció
 En todos los lenguajes esta el concepto de properties, menos en JAVA.. y por eso en JAVA lidiamos con los getters y setter... y me dice:
 OYE, LA BUENA PRACTICA ES PONER GETTERS Y SETTERS DESDE EL DIA 0.. aunque no pongas restricciones dentro... 
 POR SI ACASO EL DIA DE MAÑANA LAS TIENES QUE PONER???? EIN??? EN SERIO???
+
+
+
+
+SERVIDOR
+
+    Aplicacion-Servidor <-> DiccionariosRestControllerV1 <-> SuministradorDeDiccionariosDesdeFicheros <-> DiccionarioDesdeFichero
+        ^
+        diccionario-español
+                                    ^^^^^^
+API REST DE COMUNICACION                -----------------------------   VVVVVV
+
+LOCAL
+                                
+
+
+    Aplicacion-Terminal-Remota <-> ProcesadorDePeticiones <-> SuministradorDeDiccionariosRemotoRest
+        
+
+
+
+ANTES
+
+    Aplicacion-Terminal <-> ProcesadorDePeticiones <-> SuministradorDeDiccionariosDesdeFicheros <-> DiccionarioDesdeFichero
+        ^
+        diccionario-español

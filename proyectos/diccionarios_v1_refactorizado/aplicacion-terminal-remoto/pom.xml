@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 
+    Este proyecto es un proyecto hijo de otro proyecto.
+    He de indicar aqui el proyecto padre
+    -->
+    <parent>
+        <groupId>com.curso.diccionarios_v1</groupId>
+        <artifactId>diccionarios_v1</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>aplicacion-terminal-remoto</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.curso.diccionarios_v1</groupId>
+            <artifactId>procesador-de-peticiones</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.curso.diccionarios_v1</groupId>
+            <artifactId>comunicador-terminal</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.curso.diccionarios_v1</groupId>
+            <artifactId>diccionarios-gestion-impl-rest</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>com.curso.diccionarios.Aplicacion</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>  
+
+
+</project>
