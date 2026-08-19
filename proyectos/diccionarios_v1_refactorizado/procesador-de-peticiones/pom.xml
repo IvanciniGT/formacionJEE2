@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.curso.diccionarios_v1</groupId>
             <artifactId>diccionarios-gestion-api</artifactId>
-            <version>1.0.0</version>
+            <version>[1,2]</version> <!-- puede usar la ultima 1.X.X que haya -->
         </dependency>
         <dependency>
             <groupId>com.curso.diccionarios_v1</groupId>
