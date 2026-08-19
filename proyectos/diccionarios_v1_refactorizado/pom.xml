@@ -30,6 +30,7 @@
         <module>procesador-de-peticiones</module>
         <module>diccionario-espanol</module>
         <module>aplicacion-terminal</module>
+        <module>diccionarios-rest-api</module>
     </modules>
 
 </project>
