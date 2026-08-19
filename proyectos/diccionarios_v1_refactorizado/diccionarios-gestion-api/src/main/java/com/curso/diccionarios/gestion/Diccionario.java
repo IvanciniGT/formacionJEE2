@@ -10,21 +10,19 @@ import com.curso.diccionarios.gestion.respuesta.palabra.RespuestaPalabra;
 
 public interface Diccionario {
 
-    default RespuestaPalabra getSignificados(String palabra) {
+    default RespuestaPalabra dameSignificados(String palabra) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    @Deprecated
-    default boolean existe(String palabra) {
-        return getSignificados(palabra) instanceof PalabraEncontrada;
-    }
+    @Deprecated(
+            since = "1.1.0",
+            forRemoval = true
+    )
+    boolean existe(String palabra);
 
-    @Deprecated
-    default Optional<List<String>> getSignificadosLegacy(String palabra) {
-        return switch (getSignificados(palabra)) {
-            case PalabraEncontrada pe -> Optional.of(pe.significados());
-            case PalabraNoEncontrada ignored -> Optional.empty();
-            case ErrorAlObtenerPalabra ignored -> Optional.empty();
-        };
-    }
+    @Deprecated(
+            since = "1.1.0",
+            forRemoval = true
+    )
+    Optional<List<String>> getSignificados(String palabra) ;
 }
