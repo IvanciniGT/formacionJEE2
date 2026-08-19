@@ -3,6 +3,7 @@ package com.curso.diccionarios.restv1;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import com.curso.diccionarios.restv1.dto.RespuestaPalabraDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,7 @@ import com.curso.diccionarios.gestion.respuesta.palabra.PalabraNoEncontrada;
 import com.curso.diccionarios.gestion.respuesta.palabra.ErrorAlObtenerPalabra;
 
 import com.curso.diccionarios.restv1.dto.Idioma;
-
+import com.curso.diccionarios.restv1.dto.Palabra;
 import com.curso.diccionarios.gestion.SuministradorDeDiccionarios;
 
 public class DiccionariosRestControllerV1Impl implements DiccionariosRestControllerV1 {
@@ -77,7 +78,57 @@ public class DiccionariosRestControllerV1Impl implements DiccionariosRestControl
     }
 
     public ResponseEntity<RespuestaPalabraDTO> obtenerSignificados(@PathVariable String idioma, @PathVariable String palabra){
-        return null;
+        RespuestaDiccionario respuestaDiccionario = suministradorDeDiccionarios.getDiccionario(idioma);
+        switch (respuestaDiccionario) {
+            case DiccionarioEncontrado diccionarioEncontrado -> {
+                // El diccionario existe, ahora verificamos si la palabra existe en ese diccionario
+                RespuestaPalabra respuestaPalabra = diccionarioEncontrado.diccionario().dameSignificados(palabra);
+                switch (respuestaPalabra) {
+                    case PalabraEncontrada palabraEncontrada -> {
+                        return ResponseEntity.ok(new RespuestaPalabraDTO(
+                                new Idioma(idioma, true),
+                                new Palabra(palabra, true),
+                                palabraEncontrada.significados()
+                            )
+                        );
+                    }
+                    case PalabraNoEncontrada palabraNoEncontrada -> {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                            new RespuestaPalabraDTO(
+                                new Idioma(idioma, true),
+                                new Palabra(palabra, false)
+                            )
+                        ); // 404
+                    }
+                    case ErrorAlObtenerPalabra error -> {
+                        return ResponseEntity.status(500).body(
+                            new RespuestaPalabraDTO(
+                                new Idioma(idioma),
+                                new Palabra(palabra),
+                                error.mensajeError()
+                            )
+                        ); // 500
+                    }
+                }
+            }
+            case DiccionarioNoEncontrado diccionarioNoEncontrado -> {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new RespuestaPalabraDTO(
+                        new Idioma(idioma, false),
+                        new Palabra(palabra, false)
+                    )
+                ); // 404
+            }
+            case ErrorAlObtenerDiccionario error -> {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new RespuestaPalabraDTO(
+                        new Idioma(idioma),
+                        new Palabra(palabra),
+                        error.mensajeError()
+                    )
+                ); // 500
+            }
+        }
     }
 }
 
