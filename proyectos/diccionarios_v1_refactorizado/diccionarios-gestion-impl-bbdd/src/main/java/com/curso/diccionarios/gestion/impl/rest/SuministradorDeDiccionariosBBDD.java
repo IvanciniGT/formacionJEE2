@@ -27,7 +27,13 @@ import com.curso.diccionarios.bd.entity.DiccionarioEnBD;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.stereotype.Service;
+
 @RequiredArgsConstructor
+//@Component // Esto me permite borrar la factoria (@Configuration+@Bean) que tenia en la aplicación-servidor
+// Lo normal sería usar otra anotación:
+@Service // Un @Services en un @Component que contiene lógica de negocio.
+         // La anotación no cambia el comportamniento .. Solo aporta valor SEMANTICO a quien lea este fichero.
 public class SuministradorDeDiccionariosBBDD implements SuministradorDeDiccionarios {
 
     private final DiccionarioRepository diccionarioRepository;
@@ -73,6 +79,7 @@ public class SuministradorDeDiccionariosBBDD implements SuministradorDeDiccionar
             default                                  -> Optional.empty();
         };
     }
+
     public RespuestaPalabra dameSignificados(String idioma,String palabra) {
         try{
             Optional<PalabraEnBD> palabraEnBD = palabraRepository.findByPalabraIgnoringCaseAndDiccionario_IdiomaIgnoringCase(palabra, idioma);
@@ -113,4 +120,3 @@ public class SuministradorDeDiccionariosBBDD implements SuministradorDeDiccionar
     }
 
 }
-

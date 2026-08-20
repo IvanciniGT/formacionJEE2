@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import com.curso.diccionarios.gestion.SuministradorDeDiccionarios;
 import com.curso.diccionarios.gestion.impl.ficheros.SuministradorDeDiccionariosEnFicheros;
 
-@Configuration
+//@Configuration
 // Esta clase contiene configuraciones para la aplicación .
 // @Configuration es otra de esas anotaciones que extiende @Component,
 //  y que hace que Spriong en automático cree una instancia de esta clase.
@@ -20,7 +20,7 @@ public class SuministradorDeDiccionariosConfiguration {
 
     private static final String RUTA_DE_DICCIONARIOS = "diccionarios";
 
-    @Bean
+    //@Bean
     public SuministradorDeDiccionarios getSuministrador(){
          return new SuministradorDeDiccionariosEnFicheros(RUTA_DE_DICCIONARIOS);
     }
