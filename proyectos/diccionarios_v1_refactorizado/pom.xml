@@ -36,6 +36,7 @@
         <module>aplicacion-servidor</module>    
         <module>aplicacion-terminal-remoto</module>
         <module>diccionarios-en-bbdd</module>
+        <module>diccionarios-gestion-impl-bbdd</module>
     </modules>
 
 </project>

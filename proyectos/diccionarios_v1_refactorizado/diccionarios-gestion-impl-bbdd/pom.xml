@@ -14,24 +14,28 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>diccionarios-en-bbdd</artifactId>
+    <artifactId>diccionarios-gestion-impl-bbdd</artifactId>
     <version>1.0.0</version>
 
     <packaging>jar</packaging>
 
     <dependencies>
-
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>4.1.0</version>
+            <groupId>com.curso.diccionarios_v1</groupId>
+            <artifactId>diccionarios-gestion-api</artifactId>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
+            <groupId>com.curso.diccionarios_v1</groupId>
+            <artifactId>diccionarios-en-bbdd</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <!-- SpringBoot: Web-->
+        <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
             <version>4.1.0</version>
         </dependency>
-        <!-- Lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -59,5 +63,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

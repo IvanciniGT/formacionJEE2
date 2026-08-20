@@ -15,12 +15,12 @@ import com.curso.diccionarios.restv1.dto.RespuestaPalabraDTO;
 import com.google.gson.Gson;
 import com.curso.diccionarios.gestion.Diccionario;
 
-public class DiccionarioRest implements Diccionario {
+public class DiccionarioBBDD implements Diccionario {
 
     private final String rutaServidor;
     private final String idioma;
 
-    public DiccionarioRest(String rutaServidor, String idioma) {
+    public DiccionarioBBDD(String rutaServidor, String idioma) {
         this.rutaServidor = rutaServidor;
         this.idioma = idioma;
     }
