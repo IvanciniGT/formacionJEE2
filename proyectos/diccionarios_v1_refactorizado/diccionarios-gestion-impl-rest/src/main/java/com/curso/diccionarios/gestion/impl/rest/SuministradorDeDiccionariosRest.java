@@ -29,7 +29,7 @@ public class SuministradorDeDiccionariosRest implements SuministradorDeDiccionar
 
     public Optional<Diccionario> dameDiccionario(String idioma){
         return switch(getDiccionario(idioma)) {
-            case DiccionarioEncontrado encontrado -> Optional.of(new DiccionarioRest( rutaServidor));
+            case DiccionarioEncontrado encontrado -> Optional.of(new DiccionarioRest( rutaServidor, idioma ));
             default                               -> Optional.empty();
         };
     }
@@ -43,17 +43,17 @@ public class SuministradorDeDiccionariosRest implements SuministradorDeDiccionar
         // - 500 -> ErrorAlObtenerDiccionario
         // Vamos a hacer la petición con el aAPI nueva de Java 11, HttpClient / HttpRequest 
         // Manejados con patrones builder y switch expressions.
-        HttpClient client = HttpClient.newHttpClient();
+        HttpClient client = HttpClient.newHttpClient(); // Como si me abro una pestaña en el navegador. O como si preparo el comando curl, o si abro el postman o el boomerang
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(rutaServidor + "/v1/diccionario/" + idioma))
                 .HEAD()
                 .build();
         // Lanzo el request usando mi cliente y obtengo la respuesta
         try {
-            var response = client.send(request, BodyHandlers.discarding());
+            var response = client.send(request, BodyHandlers.discarding()); // Paso del body
             int statusCode = response.statusCode();
             return switch (statusCode) {
-                case 200 -> new DiccionarioEncontrado( new DiccionarioRest( rutaServidor));
+                case 200 -> new DiccionarioEncontrado( new DiccionarioRest( rutaServidor, idioma ) );
                 case 404 -> new DiccionarioNoEncontrado(idioma);
                 default -> new ErrorAlObtenerDiccionario("Error interno del servidor");
             };

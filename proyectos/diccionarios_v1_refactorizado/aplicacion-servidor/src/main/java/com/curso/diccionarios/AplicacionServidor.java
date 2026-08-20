@@ -23,7 +23,8 @@ public class AplicacionServidor {
         // Spring monta dentro de ese TOMCAT mi aplciación.
         // Spring va a buscar dentro de los paquetes de mi proyecto, 
         // Los componentes que tiene mi aplciación 
-        // (Clases marcadas con @Component o anotaciones derivadas, como por ejemplo @RestController)
+        // (Clases marcadas con @Component o anotaciones derivadas, 
+        // como por ejemplo @RestController, @Configuration, @Service, @Repository, @ControllerAdvice...)
         // Spring, al encontrar nuestra clase con anotación @RestController, 
         // va a crear un objeto de esa clase (new)
         // Y configura en automático en el tomcat todas las RUTAS HTTP definidas dentro de esa clase 

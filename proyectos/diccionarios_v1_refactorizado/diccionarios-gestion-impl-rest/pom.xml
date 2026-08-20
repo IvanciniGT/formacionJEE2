@@ -30,5 +30,11 @@
             <artifactId>diccionarios-rest-api</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <!-- Meter la libreria GSON para poder deserializar el JSON que viene del servidor REST a un objeto de tipo RespuestaPalabraDTO -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
     </dependencies>
 </project>

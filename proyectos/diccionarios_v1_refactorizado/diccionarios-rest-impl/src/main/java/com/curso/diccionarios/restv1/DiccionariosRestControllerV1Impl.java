@@ -31,6 +31,12 @@ public class DiccionariosRestControllerV1Impl implements DiccionariosRestControl
 
     public ResponseEntity<Void> existeIdioma(@PathVariable("idioma") String idioma){
        RespuestaDiccionario respuesta = suministradorDeDiccionarios.getDiccionario(idioma);
+       return switch (respuesta) {
+            case DiccionarioEncontrado diccionarioEncontrado -> ResponseEntity.ok().build();       // 200
+            case DiccionarioNoEncontrado diccionarioNoEncontrado -> ResponseEntity.notFound().build(); // 404
+            default -> ResponseEntity.internalServerError().build(); // 500
+        };
+        /*
        switch (respuesta) {
             case DiccionarioEncontrado diccionarioEncontrado -> {
                 return ResponseEntity.ok().build();       // 200
@@ -41,7 +47,7 @@ public class DiccionariosRestControllerV1Impl implements DiccionariosRestControl
             default -> {
                 return ResponseEntity.internalServerError().build(); // 500
             }
-        }
+        }*/
     }
 
     public ResponseEntity<Void> existePalabra(@PathVariable("idioma") String idioma, @PathVariable("palabra") String palabra){
