@@ -5,7 +5,7 @@ import com.curso.diccionarios.gestion.impl.rest.SuministradorDeDiccionariosRest;
 
 public class SuministradorDeDiccionariosFactory {
 
-    private static final String RUTA_SERVIDOR = "http://localhost:8080/";
+    private static final String RUTA_SERVIDOR = "http://localhost:8080";
 
     public static SuministradorDeDiccionarios getInstance(){
          //return new SuministradorDeDiccionariosEnFicheros(RUTA_DE_DICCIONARIOS);

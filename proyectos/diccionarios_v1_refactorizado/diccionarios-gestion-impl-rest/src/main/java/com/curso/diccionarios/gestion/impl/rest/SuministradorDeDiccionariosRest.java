@@ -58,6 +58,7 @@ public class SuministradorDeDiccionariosRest implements SuministradorDeDiccionar
                 default -> new ErrorAlObtenerDiccionario("Error interno del servidor");
             };
         } catch (Exception e) {
+            e.printStackTrace();
             return new ErrorAlObtenerDiccionario(e.getMessage());
         }
     }

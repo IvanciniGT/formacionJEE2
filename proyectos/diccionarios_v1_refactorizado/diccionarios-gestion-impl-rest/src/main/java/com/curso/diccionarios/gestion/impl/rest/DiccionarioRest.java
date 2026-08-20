@@ -45,7 +45,7 @@ public class DiccionarioRest implements Diccionario {
     public RespuestaPalabra dameSignificados(String palabra) {
         HttpClient client = HttpClient.newHttpClient(); // Como si me abro una pestaña en el navegador. O como si preparo el comando curl, o si abro el postman o el boomerang
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(rutaServidor + "/v1/diccionario/" + idioma + "/" + palabra))
+                .uri(URI.create(rutaServidor + "/v1/diccionario/" + idioma + "/" + palabra + "/significados"))
                 .GET()
                 .build();
         // Lanzo el request usando mi cliente y obtengo la respuesta
