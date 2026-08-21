@@ -12,11 +12,14 @@ import com.curso.diccionarios.bd.entity.SignificadoEnBD;
 import com.curso.diccionarios.bd.repository.DiccionarioRepository;
 import com.curso.diccionarios.bd.repository.PalabraRepository;
 
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,8 +29,15 @@ import java.util.List;
 // Creará una instancia de él al arrancar la aplciación ( new CargadorDiccionariosEnBBDD(...) )
 // Al ver que necesita un DiccionarioRepository y un PalabraRepository, Spring se los inyectará automáticamente (porque son componentes de Spring también).
 // Y además, ejecutará en automático la función run() de esta clase, que es la que implementa la interfaz CommandLineRunner.
+//@Slf4j
 public class CargadorDiccionariosEnBBDD implements CommandLineRunner {
 
+    private final Logger log = Logger.getLogger(CargadorDiccionariosEnBBDD.class.getName());
+
+    // VAmos a definir un logger, para poder escribir en el log de Spring. (que se verá en la consola)
+    // Podemos hacerlo con una anotación de Lombok.
+    // Como tenemos lombok, ponemos la anotación @Slf4j y ya tenemos un logger disponible en la variable "log"
+    // Para usarlo, simplemente hacemos log.info("mensaje") o log.error("mensaje") o log.debug("mensaje")
     // Los diccionarios estarán en ficheros de texto.
     // dentro de unba carpeta parametrizable
     @Value("${diccionarios.carpeta:diccionarios}")
@@ -51,9 +61,14 @@ public class CargadorDiccionariosEnBBDD implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception { // Esta es la que ejecuta Spring automáticamente al arrancar la aplicación.
         // Dijimos que cargamos ficheros SOLO si no hay datos ya en BBDD
+        log.info("Comprobando si hay diccionarios en BBDD...");
         if(diccionarioRepository.count() == 0){
+            log.info("No hay diccionarios en BBDD. Cargando diccionarios desde ficheros...");
             cargarFicheros();
+        }else {
+            log.info("Ya hay diccionarios en BBDD. No se cargan diccionarios desde ficheros.");
         }
+
     }
 
     public void cargarFicheros(){
@@ -66,8 +81,11 @@ public class CargadorDiccionariosEnBBDD implements CommandLineRunner {
             for(Resource ficheroDiccionario: recursos){
                 String nombreDelFichero = ficheroDiccionario.getFilename();
                 String idioma = nombreDelFichero.substring(0, nombreDelFichero.indexOf(".txt"));
+                log.info("Cargando diccionario de idioma: " + idioma + " desde fichero: " + nombreDelFichero);
                 Map<String, List<String>> palabrasYSignificados = leerFicheroDeDiccionario(carpetaDeLosDiccionarios + "/" + nombreDelFichero);
                 cargarDiccionarioEnBBDD(idioma, palabrasYSignificados);
+                log.info("Diccionario de idioma: " + idioma + " cargado correctamente en BBDD.");
+                log.info("Palabras cargadas: " + palabrasYSignificados.size());
             }
         }catch(Exception e){
             throw new RuntimeException("Error al cargar los diccionarios en BBDD: " + e.getMessage(), e);
@@ -78,6 +96,23 @@ public class CargadorDiccionariosEnBBDD implements CommandLineRunner {
         return this.getClass().getClassLoader();
     }
 
+
+    // Tal y como está, cada .save() hace su propio commit. 
+    // eso haría que la carga fuera mucho más lenta.
+    // Lo normal sería meter todos esos INSERTS a BBDD dentro de una transacción:
+    // En SQL Sería algo así como:
+    // BEGIN TRANSACTION
+    // INSERT INTO diccionario ...
+    // INSERT INTO palabra ...
+    // INSERT INTO significado ...
+    // INSERT INTO significado ...
+    // INSERT INTO palabra ...
+    // INSERT INTO significado ...
+    // INSERT INTO significado ...
+    // ...    
+    // COMMIT
+    // En Spring eso lo resolvemos muy fácil:
+    @Transactional
     private void cargarDiccionarioEnBBDD(String idioma, Map<String, List<String>> palabrasYSignificados) throws Exception{
         // Crear el idioma en BBDD
         DiccionarioEnBD diccionario = new DiccionarioEnBD();

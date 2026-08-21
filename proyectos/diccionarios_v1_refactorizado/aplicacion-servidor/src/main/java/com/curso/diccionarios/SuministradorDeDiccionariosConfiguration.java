@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.curso.diccionarios.gestion.SuministradorDeDiccionarios;
-import com.curso.diccionarios.gestion.impl.ficheros.SuministradorDeDiccionariosEnFicheros;
 
 //@Configuration
 // Esta clase contiene configuraciones para la aplicación .
@@ -20,9 +19,9 @@ public class SuministradorDeDiccionariosConfiguration {
 
     private static final String RUTA_DE_DICCIONARIOS = "diccionarios";
 
-    //@Bean
+    /*@Bean
     public SuministradorDeDiccionarios getSuministrador(){
          return new SuministradorDeDiccionariosEnFicheros(RUTA_DE_DICCIONARIOS);
-    }
+    }*/
 
 }

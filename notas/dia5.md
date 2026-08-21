@@ -79,3 +79,35 @@ App terminal -> Controlador Diccionarios Rest -> ServicioSuministradorDeDicciona
                                                         v
                                                     Servicio -> RepositorioEstadisticas -> BBDD2 donde guardo en una tabla cada busqueda de palabra que se hace -> ESTADISTICAS
                                                     
+
+Si tuvieramos una BBDD de verdad (y la tendremos en un entorno de producción), sus datos los configuro en el archivo application.properties. 
+
+
+```properties
+
+# Configuración de la BBDD
+spring.datasource.url=jdbc:postgresql://localhost:5432/diccionarios
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+```
+
+
+En nuestro caso, que vamos a usar la BBDD en Memoria H2, solo necesito poner el JAR de H2 en el classpath y Spring Boot se encarga de todo. No necesito poner nada en el application.properties. Pero si quiero, puedo ponerlo:
+
+```properties
+
+# Configuración de la BBDD H2 en memoria
+spring.datasource.url=jdbc:h2:mem:diccionarios;DB_CLOSE_DELAY=-1
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+```

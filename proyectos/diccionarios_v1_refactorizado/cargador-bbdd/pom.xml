@@ -34,6 +34,14 @@
             <!-- En un rato lo hacemos: REFACTORIZACION -->
             <version>4.1.0</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.46</version>
+            <scope>provided</scope> <!-- Es una dependencia que solo se usa en tiempo de compilacion, no en tiempo de ejecucion -->
+        </dependency>
     </dependencies>
 
 
