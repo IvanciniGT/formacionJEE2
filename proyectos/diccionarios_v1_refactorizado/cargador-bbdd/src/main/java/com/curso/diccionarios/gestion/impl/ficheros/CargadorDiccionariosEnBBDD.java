@@ -32,8 +32,12 @@ public class CargadorDiccionariosEnBBDD { // Librería, Amazón (tienda online..
     public CargadorDiccionariosEnBBDD(String carpetaDeLosDiccionarios) {
         this.carpetaDeLosDiccionarios = carpetaDeLosDiccionarios;
     }
-    
-    private Map<String, List<String>> leerFicheroDeDiccionario(String rutaDelFichero) throws Exception{
+
+    public void cargarFicheros(){
+        // Debe de ir leyendo CADA FICHERO de diccionario que exista en la carpeta y solicitando su carga en BBDD
+    }
+
+    private void cargarFichero(String rutaDelFichero) throws Exception{
         Map<String, List<String>> palabrasYSignificados = new HashMap<>();
         // Leer el fichero
         // Lo haremos mediante el cargador de clases... para que lo encuentre en classpath.
