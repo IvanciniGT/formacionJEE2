@@ -20,6 +20,7 @@ public final class PalabraNoEncontrada implements RespuestaPalabra {
         this.diccionario = diccionario;
         this.palabra = palabra;
     }
+    
     public PalabraNoEncontrada(String palabra) {
         this.palabra = palabra;
     }

@@ -105,6 +105,7 @@ public class SuministradorDeDiccionariosBBDD implements SuministradorDeDiccionar
             return new ErrorAlObtenerPalabra(e.getMessage());
         }
     }
+    
     public RespuestaPalabra existePalabra(String idioma,String palabra) {
         try{
             Optional<PalabraEnBD> palabraEnBD = palabraRepository.findByPalabraIgnoringCaseAndDiccionario_IdiomaIgnoringCase(palabra, idioma);
