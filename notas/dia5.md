@@ -111,3 +111,15 @@ spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
 ```
+
+
+---
+
+Ampliación de la funcionalidad:
+- Queremos que si una palabra no existe, ofrezca las sugerencias!
+- Si busco manana, me diga que no existe, y me ofrezca sugerencias: manzana, manaña, manada, manzano etc.
+
+Quedarnos con las palabras que sean similares a la objetivo.
+
+Hay un algoritmo que se llama Distancia de Levenshtein, que nos dice cuantas operaciones (inserciones, borrados, sustituciones) hay que hacer para pasar de una palabra a otra.
+Necesitamos APLICAR ESTE ALGORITMO SOBRE TODAS LAS PALABRAS DEL DICCIONARIO, Y QUEDARNOS CON LAS MAS CERCANAS A LA PALABRA OBJETIVO. PARA ESO NECESITARE ORDENAR POR DISTANCIA, Y QUEDARNOS CON LAS 10 PRIMERAS.. como mucho. SOLO Incluiremos en esa lista de sugerencias las palabras que tengan una distancia de Levenshtein menor o igual a 2. (Si la distancia es mayor, no tiene sentido ofrecerla como sugerencia).

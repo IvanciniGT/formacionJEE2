@@ -23,7 +23,6 @@ import com.curso.diccionarios.bd.repository.PalabraRepository;
 
 import com.curso.diccionarios.bd.entity.PalabraEnBD;
 import com.curso.diccionarios.bd.entity.SignificadoEnBD;
-import com.curso.diccionarios.bd.entity.DiccionarioEnBD;
 
 import lombok.RequiredArgsConstructor;
 
@@ -97,12 +96,65 @@ public class SuministradorDeDiccionariosBBDD implements SuministradorDeDiccionar
                 // }
                 return new PalabraEncontrada(palabra, significadosComoTexto);
             } else {
-                return new PalabraNoEncontrada(palabra);
+                return new PalabraNoEncontrada(palabra, new DiccionarioBBDD(idioma)); // Modo lazy para las sugerencias
+                // Podría calcularlas de antemano.. YO LO HARIA Y las sugerencias si no se encuentra palabra LAS DOY SIEMPRE
+                // Y SOLO LOS SIGNIFICADOS SI LA PALABRA SE ENCUENTRA LOS DOY DESDE ESTA FUNCION y no desde EXISTE.
+                // En EXISTE es donde implementaria el modo lazy para los significados.
             }
         } catch (Exception e) {
             return new ErrorAlObtenerPalabra(e.getMessage());
         }
     }
+    public RespuestaPalabra existePalabra(String idioma,String palabra) {
+        try{
+            Optional<PalabraEnBD> palabraEnBD = palabraRepository.findByPalabraIgnoringCaseAndDiccionario_IdiomaIgnoringCase(palabra, idioma);
+            if (palabraEnBD.isPresent()) {
+                return new PalabraEncontrada(palabra); // Deberíamos inyectar el diccionario... para que se puedan buscar en modo lazy
+            } else {
+                List<String> sugerencias = getSugerencias(idioma, palabra);
+                return new PalabraNoEncontrada(palabra, sugerencias);
+            }
+        } catch (Exception e) {
+            return new ErrorAlObtenerPalabra(e.getMessage());
+        }
+    }
+
+    private List<String> getSugerencias(String idioma, String palabra) {
+        // ESTO SE COMPLICA. Necesito todas las plabras de la BBDD... al menos las que tengan un tamaño similar.
+        // Esto debería implementarlo a nivel de repo... pero ahora no lo está
+        List<PalabraEnBD> palabrasSimilares = palabraRepository.findAll(); // Estoy jodido.. porque no tengo ni capacidad para buscar / filtrar por idioma. OTRA COSA QUE METER AL REPO
+        // Ahora me toca hacerlo aqui:
+        List<String> palabrasDelMismoIdioma = palabrasSimilares.stream()
+                .filter(p -> p.getDiccionario().getIdioma().equalsIgnoreCase(idioma)) // Filtramos por idioma
+                .map(PalabraEnBD::getPalabra) // Obtenemos la palabra como String
+                .toList();
+
+        // Esa lista es la que tengo que procesar.
+        return palabrasDelMismoIdioma.stream()
+
+                                     .toList();
+    }
+
+    private static int distance(String a, String b) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+        // i == 0
+        int [] costs = new int [b.length() + 1];
+        for (int j = 0; j < costs.length; j++)
+            costs[j] = j;
+        for (int i = 1; i <= a.length(); i++) {
+            // j == 0; nw = lev(i - 1, j)
+            costs[0] = i;
+            int nw = i - 1;
+            for (int j = 1; j <= b.length(); j++) {
+                int cj = Math.min(1 + Math.min(costs[j], costs[j - 1]), a.charAt(i - 1) == b.charAt(j - 1) ? nw : nw + 1);
+                nw = costs[j];
+                costs[j] = cj;
+            }
+        }
+        return costs[b.length()];
+    }
+
 
     @RequiredArgsConstructor
     private class DiccionarioBBDD implements Diccionario {
@@ -116,6 +168,9 @@ public class SuministradorDeDiccionariosBBDD implements SuministradorDeDiccionar
         }
         public RespuestaPalabra dameSignificados(String palabra) {
             return SuministradorDeDiccionariosBBDD.this.dameSignificados(idioma, palabra);
+        }
+        public RespuestaPalabra existePalabra(String palabra) {
+            return SuministradorDeDiccionariosBBDD.this.existePalabra(idioma, palabra);
         }
     }
 
