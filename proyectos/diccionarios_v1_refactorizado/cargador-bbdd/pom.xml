@@ -20,6 +20,20 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>com.curso.diccionarios_v1</groupId>
+            <artifactId>diccionarios-en-bbdd</artifactId>
+            <version>1.0.0</version><!-- Este me da los repos, para poder hacer las inserciones -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!-- BOM: Bill of Materials. Es un proyecto que contiene las versiones de las librerias que necesita otra libreria -->
+            <!-- Lo suyo sería no definir la versión de Springboot aqui. Sino definirla en un BOM a nivel del proyecto padre -->
+            <!-- En un rato lo hacemos: REFACTORIZACION -->
+            <version>4.1.0</version>
+        </dependency>
     </dependencies>
 
 

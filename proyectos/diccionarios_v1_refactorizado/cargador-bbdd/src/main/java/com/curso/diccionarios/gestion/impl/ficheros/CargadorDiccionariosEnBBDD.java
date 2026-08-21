@@ -1,43 +1,109 @@
 package com.curso.diccionarios.gestion.impl.ficheros;
-import java.util.Optional;
-import java.util.WeakHashMap;
 
-import com.curso.diccionarios.gestion.Diccionario;
-import com.curso.diccionarios.gestion.SuministradorDeDiccionarios;
-import com.curso.diccionarios.gestion.respuesta.diccionario.DiccionarioEncontrado;
-import com.curso.diccionarios.gestion.respuesta.diccionario.DiccionarioNoEncontrado;
-import com.curso.diccionarios.gestion.respuesta.diccionario.ErrorAlObtenerDiccionario;
-import com.curso.diccionarios.gestion.respuesta.diccionario.RespuestaDiccionario;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.stereotype.Component;
+
+import com.curso.diccionarios.bd.entity.DiccionarioEnBD;
+import com.curso.diccionarios.bd.entity.PalabraEnBD;
+import com.curso.diccionarios.bd.entity.SignificadoEnBD;
+import com.curso.diccionarios.bd.repository.DiccionarioRepository;
+import com.curso.diccionarios.bd.repository.PalabraRepository;
+
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.rmi.server.ExportException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
-// Nos puede interesar montar una cache de diccionarios.
-// Es decir, si me piden 2 veces el mismo diccionario, no lo leo 2 veces del HDD.
-// La primera vez, lo leo del HDD y lo guardo en memoria. La segunda vez, lo leo de memoria.
-// La cache es CACHE!
-// Y una cache debe siempre, por definición tener un mecanismo de VACIADO
-// Una forma MUY SENCILLA de montar esto sería usando un WeakHashMap.
-public class CargadorDiccionariosEnBBDD { // Librería, Amazón (tienda online...)
+@Component
+// Esta clase también es un COMPONENTE DE LA APLCIACION, Que quiero que Spring AUTODESCUBRA
+// Spring, cuando lea este componente, al ver que implementa CommandLineRunner:
+// Creará una instancia de él al arrancar la aplciación ( new CargadorDiccionariosEnBBDD(...) )
+// Al ver que necesita un DiccionarioRepository y un PalabraRepository, Spring se los inyectará automáticamente (porque son componentes de Spring también).
+// Y además, ejecutará en automático la función run() de esta clase, que es la que implementa la interfaz CommandLineRunner.
+public class CargadorDiccionariosEnBBDD implements CommandLineRunner {
 
     // Los diccionarios estarán en ficheros de texto.
     // dentro de unba carpeta parametrizable
-    private final String carpetaDeLosDiccionarios;
+    @Value("${diccionarios.carpeta:diccionarios}")
+    // Esta es una anotación de Spring.
+    // Spring, dentro del flujo que crea para la aplicación hace muchas cosas.
+    // Una de esas cosas es buscar un fichero llamado application.properties | application.yml
+    // en ese fichero puedo definir propiedades de configuracion de mi aplicación, como por ejemplo:
+    // "diccionarios.carpeta=mi_carpeta_de_diccionarios"
+    // Spring lee en automático ese fichero. YO NO TENGO QUE HACER NADA
+    // Y con esta anotación, suministrá (RELLENA) la variable con el valor que venga en el fichero de propiedades.
+    // Si no viene valor, le pone como valor por defecto "diccionarios", lo que está despues de los dos puntos.
+    private String carpetaDeLosDiccionarios;
+    private final DiccionarioRepository diccionarioRepository;
+    private final PalabraRepository palabraRepository;
 
-    public CargadorDiccionariosEnBBDD(String carpetaDeLosDiccionarios) {
-        this.carpetaDeLosDiccionarios = carpetaDeLosDiccionarios;
+    public CargadorDiccionariosEnBBDD(DiccionarioRepository diccionarioRepository, PalabraRepository palabraRepository) { // Inyección de dependencias de Spring. Spring me inyecta automáticamente el DiccionarioRepository y el PalabraRepository, porque son componentes de Spring también.
+        this.diccionarioRepository = diccionarioRepository;
+        this.palabraRepository = palabraRepository;
+    }
+
+    @Override
+    public void run(String... args) throws Exception { // Esta es la que ejecuta Spring automáticamente al arrancar la aplicación.
+        // Dijimos que cargamos ficheros SOLO si no hay datos ya en BBDD
+        if(diccionarioRepository.count() == 0){
+            cargarFicheros();
+        }
     }
 
     public void cargarFicheros(){
         // Debe de ir leyendo CADA FICHERO de diccionario que exista en la carpeta y solicitando su carga en BBDD
+        // Para cada fichero: lo leo -> Mapa
+        // Para cada Mapa -> Lo cargo en BBDD
+        try{
+            PathMatchingResourcePatternResolver buscador = new PathMatchingResourcePatternResolver();
+            Resource[] recursos = buscador.getResources("classpath*:" + carpetaDeLosDiccionarios + "/*.txt");
+            for(Resource ficheroDiccionario: recursos){
+                String nombreDelFichero = ficheroDiccionario.getFilename();
+                String idioma = nombreDelFichero.substring(0, nombreDelFichero.indexOf(".txt"));
+                Map<String, List<String>> palabrasYSignificados = leerFicheroDeDiccionario(carpetaDeLosDiccionarios + "/" + nombreDelFichero);
+                cargarDiccionarioEnBBDD(idioma, palabrasYSignificados);
+            }
+        }catch(Exception e){
+            throw new RuntimeException("Error al cargar los diccionarios en BBDD: " + e.getMessage(), e);
+        }
+    }
+  
+    private ClassLoader getClassLoader(){
+        return this.getClass().getClassLoader();
     }
 
-    private void cargarFichero(String rutaDelFichero) throws Exception{
+    private void cargarDiccionarioEnBBDD(String idioma, Map<String, List<String>> palabrasYSignificados) throws Exception{
+        // Crear el idioma en BBDD
+        DiccionarioEnBD diccionario = new DiccionarioEnBD();
+        diccionario.setIdioma(idioma);
+        diccionarioRepository.save(diccionario);
+        // Para cada palabr y sus significados, crear la palabra en BBDD asociada al diccionario
+        for(Map.Entry<String, List<String>> entry : palabrasYSignificados.entrySet()){
+            String palabra = entry.getKey();
+            List<String> significados = entry.getValue();
+            // Crear la palabra en BBDD
+            PalabraEnBD palabraEnBD = new PalabraEnBD();
+            palabraEnBD.setPalabra(palabra);
+            palabraEnBD.setDiccionario(diccionario);
+            palabraEnBD.setSignificados(
+                significados.stream().map(significado -> {
+                    SignificadoEnBD significadoEnBD = new SignificadoEnBD();
+                    significadoEnBD.setTexto(significado);
+                    significadoEnBD.setPalabra(palabraEnBD);
+                    return significadoEnBD;
+                }).toList()
+            );
+            palabraRepository.save(palabraEnBD);
+        }
+    }
+
+    private Map<String, List<String>> leerFicheroDeDiccionario(String rutaDelFichero) throws Exception{
         Map<String, List<String>> palabrasYSignificados = new HashMap<>();
         // Leer el fichero
         // Lo haremos mediante el cargador de clases... para que lo encuentre en classpath.
@@ -66,5 +132,6 @@ public class CargadorDiccionariosEnBBDD { // Librería, Amazón (tienda online..
         
         return palabrasYSignificados;
     }
+
 
 }
