@@ -24,7 +24,7 @@
         <dependency>
             <groupId>com.curso.diccionarios_v1</groupId>
             <artifactId>diccionarios-gestion-api</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.curso.diccionarios_v1</groupId>

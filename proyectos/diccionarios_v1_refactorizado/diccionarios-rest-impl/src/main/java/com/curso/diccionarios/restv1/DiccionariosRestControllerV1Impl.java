@@ -93,8 +93,10 @@ public class DiccionariosRestControllerV1Impl implements DiccionariosRestControl
                         );
                     }
                     case PalabraNoEncontrada palabraNoEncontrada -> {
+                        // Obtener las palabras similares si están disponibles
                         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                             new RespuestaPalabraDTO(
+                                palabraNoEncontrada.getPalabrasSimilares().orElse(null),
                                 new Idioma(idioma, true),
                                 new Palabra(palabra, false)
                             )
@@ -114,6 +116,7 @@ public class DiccionariosRestControllerV1Impl implements DiccionariosRestControl
             case DiccionarioNoEncontrado diccionarioNoEncontrado -> {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new RespuestaPalabraDTO(
+                        null,
                         new Idioma(idioma, false),
                         new Palabra(palabra, false)
                     )

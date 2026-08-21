@@ -23,7 +23,7 @@ public class SignificadoEnBD {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "texto", nullable = false, length = 100)
+    @Column(name = "texto", nullable = false, length = 200)
     private String texto;
 
     @ManyToOne

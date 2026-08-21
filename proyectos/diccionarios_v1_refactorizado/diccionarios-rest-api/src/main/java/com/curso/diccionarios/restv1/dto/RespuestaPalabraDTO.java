@@ -9,19 +9,20 @@ public record RespuestaPalabraDTO(
     Idioma idioma,
     Palabra palabra,
     List<String> significados,
+    List<String> sugerencias,
     String error
 ) {
 
     public RespuestaPalabraDTO(Idioma idioma, Palabra palabra, List<String> significados) {
-        this(idioma, palabra, significados, null);
+        this(idioma, palabra, significados, null, null);
     }
 
-    public RespuestaPalabraDTO(Idioma idioma, Palabra palabra) {
-        this(idioma, palabra, null, null);
+    public RespuestaPalabraDTO(List<String> sugerencias, Idioma idioma, Palabra palabra) {
+        this(idioma, palabra, null, sugerencias, null);
     }
 
     public RespuestaPalabraDTO(Idioma idioma, Palabra palabra, String error) {
-        this(idioma, palabra, null, error);
+        this(idioma, palabra, null, null, error);
     }
 
 }

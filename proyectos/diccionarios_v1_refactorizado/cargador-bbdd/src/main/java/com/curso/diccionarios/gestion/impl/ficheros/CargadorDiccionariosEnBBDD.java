@@ -115,6 +115,7 @@ public class CargadorDiccionariosEnBBDD implements CommandLineRunner {
     @Transactional
     private void cargarDiccionarioEnBBDD(String idioma, Map<String, List<String>> palabrasYSignificados) throws Exception{
         // Crear el idioma en BBDD
+        int contador = 0;
         DiccionarioEnBD diccionario = new DiccionarioEnBD();
         diccionario.setIdioma(idioma);
         diccionarioRepository.save(diccionario);
@@ -125,6 +126,7 @@ public class CargadorDiccionariosEnBBDD implements CommandLineRunner {
             // Crear la palabra en BBDD
             PalabraEnBD palabraEnBD = new PalabraEnBD();
             palabraEnBD.setPalabra(palabra);
+            contador++;
             palabraEnBD.setDiccionario(diccionario);
             palabraEnBD.setSignificados(
                 significados.stream().map(significado -> {
@@ -135,6 +137,9 @@ public class CargadorDiccionariosEnBBDD implements CommandLineRunner {
                 }).toList()
             );
             palabraRepository.save(palabraEnBD);
+            if(contador % 10000 == 0){
+                log.info("Cargadas " + contador + " palabras en BBDD para el diccionario de idioma: " + idioma);
+            }
         }
     }
 

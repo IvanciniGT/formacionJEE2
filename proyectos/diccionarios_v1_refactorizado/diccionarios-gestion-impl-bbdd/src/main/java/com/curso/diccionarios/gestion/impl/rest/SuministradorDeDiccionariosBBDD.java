@@ -3,6 +3,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,7 +106,7 @@ public class SuministradorDeDiccionariosBBDD implements SuministradorDeDiccionar
             return new ErrorAlObtenerPalabra(e.getMessage());
         }
     }
-    
+
     public RespuestaPalabra existePalabra(String idioma,String palabra) {
         try{
             Optional<PalabraEnBD> palabraEnBD = palabraRepository.findByPalabraIgnoringCaseAndDiccionario_IdiomaIgnoringCase(palabra, idioma);
@@ -131,9 +132,36 @@ public class SuministradorDeDiccionariosBBDD implements SuministradorDeDiccionar
                 .toList();
 
         // Esa lista es la que tengo que procesar.
-        return palabrasDelMismoIdioma.stream()
-
+        return palabrasDelMismoIdioma.parallelStream()
+                                      // MAP-REDUCE
+                                     .filter( palabraDeLaBBDD -> Math.abs(palabraDeLaBBDD.length() - palabra.length()) <= 2               ) // Descarto las de longitud muy diferente
+                                     .map(    palabraDeLaBBDD -> new PalabraPuntuada(palabraDeLaBBDD, distance(palabra, palabraDeLaBBDD)) ) // Calculo la distancia de Levenshtein entre la palabra buscada y la palabra de la BBDD
+                                     .filter( palabraPuntuada -> palabraPuntuada.distancia <= 2                                           ) // Descarto las que tienen una distancia de Levenshtein mayor a 2
+                                     .sorted( Comparator.comparingInt(palabraPuntuada -> palabraPuntuada.distancia)                       ) // Ordeno por distancia de Levenshtein
+                                     .limit( 10                                                                                  ) // Limito a 5 sugerencias    
+                                     .map(    palabraPuntuada -> palabraPuntuada.palabra                                                  ) // Descartando la puntuación, me quedo solo con la palabra
                                      .toList();
+
+        // Este código va a poner la cpu al 100% mientras se ejecuta. ESTA ES LA REALIDAD.
+        // Pero va a poner al 100% 1 CORE de mi CPU
+        // Quién lleva el código a la CPU? UN HILO -> THREAD
+        // Cuántos hilos tiene mi programa? 1
+        // He abierto hilos? NO
+        // Mi máquina tiene 18 cores x 2 hilos /core -> 36 hilos (36 cores virtuales)
+        // 1/36 = 2,77% de mi CPU
+        // al cambiar .stream() por .parallelStream() -> 
+        // Java va a abrir tantos hilos como cores virtuales tenga mi máquina disponibles.
+        // Y va a repartir el trabajo entre todos esos hilos.
+        // Se encarga dde todo. Me olvido de abrir hilos, de repartir el trabajo, de recoger los resultados, sincronizar los hilos, etc. Java lo hace todo por mi.
+    }
+
+    private static class PalabraPuntuada {
+        public String palabra;
+        public int distancia;
+        public PalabraPuntuada(String palabra, int distancia) {
+            this.palabra = palabra;
+            this.distancia = distancia;
+        }
     }
 
     private static int distance(String a, String b) {

@@ -29,7 +29,7 @@ public class PalabraEnBD {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "palabra", nullable = false,length = 20) // Aqui no es unique.
+    @Column(name = "palabra", nullable = false,length = 50) // Aqui no es unique.
     // Es la combinación de palabra + diccionario la que tiene que ser única.
     private String palabra;
 
