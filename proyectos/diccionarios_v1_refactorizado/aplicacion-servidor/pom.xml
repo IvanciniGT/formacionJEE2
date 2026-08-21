@@ -39,6 +39,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.curso.diccionarios_v1</groupId>
+            <artifactId>cargador-bbdd</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <!-- BOM: Bill of Materials. Es un proyecto que contiene las versiones de las librerias que necesita otra libreria -->

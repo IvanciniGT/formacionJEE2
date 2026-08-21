@@ -37,6 +37,7 @@
         <module>aplicacion-terminal-remoto</module>
         <module>diccionarios-en-bbdd</module>
         <module>diccionarios-gestion-impl-bbdd</module>
+        <module>cargador-bbdd</module>
     </modules>
 
 </project>
